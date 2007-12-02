@@ -1,0 +1,11 @@
+fftw: FFTW (Fastest Fourier Transform in the West)
+fftw:
+fftw: FFTW is a C subroutine library for computing the discrete Fourier
+fftw: transform (DFT) in one or more dimensions, of arbitrary input size,
+fftw: and of both real and complex data (as well as of even/odd data,
+fftw: i.e. the discrete cosine/sine transforms or DCT/DST). We believe
+fftw: that FFTW, which is free software, should become the FFT library
+fftw: of choice for most applications.
+fftw:
+fftw: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg>
+fftw:
