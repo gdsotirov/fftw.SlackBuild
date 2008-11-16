@@ -7,5 +7,5 @@ fftw: i.e. the discrete cosine/sine transforms or DCT/DST). We believe
 fftw: that FFTW, which is free software, should become the FFT library
 fftw: of choice for most applications.
 fftw:
-fftw: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg>
 fftw:
+fftw: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg>
