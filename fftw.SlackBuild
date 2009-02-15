@@ -7,7 +7,7 @@
 . ../slack-package.conf
 
 NAME=fftw
-VERSION=3.2
+VERSION=3.2.1
 BUILD=1
 ARCH=${ARCH:-i486}
 
