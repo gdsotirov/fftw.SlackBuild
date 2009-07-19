@@ -3,11 +3,16 @@
 # SlackBuild for FFTW
 # Written by Georgi D. Sotirov <gdsotirov@dir.bg>
 #
+# This script is for building both portable package (ARCH=i486) and SIMD
+# optimized package (ARCH=i686).
+# For the portable package all precisions are availiable (single, double,
+# long double), while for the optimized package only double precision
+# is possible.
 
 . ../slack-package.conf
 
 NAME=fftw
-VERSION=3.2.1
+VERSION=3.2.2
 BUILD=1
 ARCH=${ARCH:-i486}
 
@@ -32,9 +37,11 @@ fi
 mkdir -p $PKG
 
 if [ "$ARCH" = "i686" ]; then
-  PORTABILITY="--enable-see2"
+  PORTABILITY="--enable-sse2 --enable-fma"
+  PRECISION='double'
 else
   PORTABILITY="--enable-portable-binary"
+  PRECISION='all'
 fi
 
 # Extract the source
@@ -44,29 +51,66 @@ SRC=$TMP/$NAME-$VERSION
 cd $SRC
 fix_source
 
-# Configure
-CFLAGS=$SLKCFLAGS \
-CXXFLAGS=$SLKCFLAGS \
-./configure --build=$ARCH-slackware-linux \
-            --host=$ARCH-slackware-linux \
-            --prefix=/usr \
-            --sysconfdir=/etc \
-            --mandir=/usr/man \
-            --infodir=/usr/info \
-            --enable-shared=yes \
-            --enable-static=no \
-            --enable-fma \
-            --enable-long-double \
-            $PORTABILITY \
-            --enable-threads || exit 2
+# Configure, build and install single precision library libfftw3f
+if [ "$PRECISION" = "all" ]; then
+  CFLAGS=$SLKCFLAGS \
+  CXXFLAGS=$SLKCFLAGS \
+  ./configure --build=$ARCH-slackware-linux \
+              --host=$ARCH-slackware-linux \
+              --prefix=/usr \
+              --sysconfdir=/etc \
+              --mandir=/usr/man \
+              --infodir=/usr/info \
+              --enable-shared=yes \
+              --enable-static=no \
+              --enable-single \
+              $PORTABILITY \
+              --enable-threads || exit 2
 
-# Build
-make -j4 all || exit 2 
+  make -j4 all || exit 2 
+  make DESTDIR=$PKG install || exit 3
+fi
 
-# Install
-make DESTDIR=$PKG install || exit 3
+# Configure, build and install double precision library libfftw3
+if [ "$PRECISION" = "all" -o "$PRECISION" = "double" ]; then
+  CFLAGS=$SLKCFLAGS \
+  CXXFLAGS=$SLKCFLAGS \
+  ./configure --build=$ARCH-slackware-linux \
+              --host=$ARCH-slackware-linux \
+              --prefix=/usr \
+              --sysconfdir=/etc \
+              --mandir=/usr/man \
+              --infodir=/usr/info \
+              --enable-shared=yes \
+              --enable-static=no \
+              $PORTABILITY \
+              --enable-threads || exit 2
 
-# Prepare
+  make -j4 all || exit 2 
+  make DESTDIR=$PKG install || exit 3
+fi
+
+# Configure, build and install double precision library libfftw3
+if [ "$PRECISION" = "all" ]; then
+  CFLAGS=$SLKCFLAGS \
+  CXXFLAGS=$SLKCFLAGS \
+  ./configure --build=$ARCH-slackware-linux \
+              --host=$ARCH-slackware-linux \
+              --prefix=/usr \
+              --sysconfdir=/etc \
+              --mandir=/usr/man \
+              --infodir=/usr/info \
+              --enable-shared=yes \
+              --enable-static=no \
+	      --enable-long-double \
+              $PORTABILITY \
+              --enable-threads || exit 2
+
+  make -j4 all || exit 2 
+  make DESTDIR=$PKG install || exit 3
+fi
+
+# Prepare the package
 bin_perms $PKG
 ( cd $PKG; strip_bin; strip_lib )
 DOCFILES="$DOCFILES CONVENTIONS"
