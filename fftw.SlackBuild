@@ -26,7 +26,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: fftw.SlackBuild,v 1.7 2011/09/11 10:55:40 gsotirov Exp $
+# $Id: fftw.SlackBuild,v 1.8 2011/10/22 21:11:29 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -66,7 +66,7 @@ fi
 
 # Extract the source
 cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.gz
+tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
 SRC=$TMP/$NAME-$VERSION
 cd $SRC
 fix_source
@@ -85,10 +85,10 @@ if [ "$PRECISION" = "all" ]; then
               --enable-static=no \
               --enable-single \
               $PORTABILITY \
-              --enable-threads || exit 2
+              --enable-threads || exit 4
 
-  make -j4 all || exit 2 
-  make DESTDIR=$PKG install || exit 3
+  make -j4 all || exit 5 
+  make DESTDIR=$PKG install || exit 6
 fi
 
 # Configure, build and install double precision library libfftw3
@@ -104,10 +104,10 @@ if [ "$PRECISION" = "all" -o "$PRECISION" = "double" ]; then
               --enable-shared=yes \
               --enable-static=no \
               $PORTABILITY \
-              --enable-threads || exit 2
+              --enable-threads || exit 4
 
-  make -j4 all || exit 2 
-  make DESTDIR=$PKG install || exit 3
+  make -j4 all || exit 5 
+  make DESTDIR=$PKG install || exit 6
 fi
 
 # Configure, build and install double precision library libfftw3
@@ -124,10 +124,10 @@ if [ "$PRECISION" = "all" ]; then
               --enable-static=no \
 	      --enable-long-double \
               $PORTABILITY \
-              --enable-threads || exit 2
+              --enable-threads || exit 4
 
-  make -j4 all || exit 2 
-  make DESTDIR=$PKG install || exit 3
+  make -j4 all || exit 5 
+  make DESTDIR=$PKG install || exit 6
 fi
 
 # Prepare the package
