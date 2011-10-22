@@ -26,7 +26,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: fftw.SlackBuild,v 1.8 2011/10/22 21:11:29 gsotirov Exp $
+# $Id: fftw.SlackBuild,v 1.9 2011/10/22 21:21:44 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -79,6 +79,7 @@ if [ "$PRECISION" = "all" ]; then
               --host=$ARCH-slackware-linux \
               --prefix=/usr \
               --sysconfdir=/etc \
+              --libdir=/usr/lib${LIBDIRSUFFIX} \
               --mandir=/usr/man \
               --infodir=/usr/info \
               --enable-shared=yes \
@@ -99,6 +100,7 @@ if [ "$PRECISION" = "all" -o "$PRECISION" = "double" ]; then
               --host=$ARCH-slackware-linux \
               --prefix=/usr \
               --sysconfdir=/etc \
+              --libdir=/usr/lib${LIBDIRSUFFIX} \
               --mandir=/usr/man \
               --infodir=/usr/info \
               --enable-shared=yes \
@@ -118,6 +120,7 @@ if [ "$PRECISION" = "all" ]; then
               --host=$ARCH-slackware-linux \
               --prefix=/usr \
               --sysconfdir=/etc \
+              --libdir=/usr/lib${LIBDIRSUFFIX} \
               --mandir=/usr/man \
               --infodir=/usr/info \
               --enable-shared=yes \
