@@ -1,19 +1,39 @@
 #!/bin/sh
 #
-# SlackBuild for FFTW
-# Written by Georgi D. Sotirov <gdsotirov@dir.bg>
+# Slackware build script for FFTW
+# Copyright (C) 2007-2009,2011,2014 Georgi D. Sotirov <gdsotirov@dir.bg>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
 #
 # This script is for building both portable package (ARCH=i486) and SIMD
 # optimized package (ARCH=i686).
 # For the portable package all precisions are availiable (single, double,
 # long double), while for the optimized package only double precision
 # is possible.
+#
+# Visit SlackPack at http://sotirov-bg.net/slackpack/
+#
+# $Id: fftw.SlackBuild,v 1.6.2.1 2014/03/09 14:54:13 gsotirov Exp $
+#
 
-. ../slack-package.conf
+. ../../slack-package.conf
 
 NAME=fftw
 VERSION=3.2.2
-BUILD=2
+BUILD=${BUILD:-1}
 ARCH=${ARCH:-i486}
 
 TMP=${TMP:-/tmp}
@@ -40,13 +60,13 @@ if [ "$ARCH" = "i686" ]; then
   PORTABILITY="--enable-sse2 --enable-fma"
   PRECISION='double'
 else
-  PORTABILITY="--enable-portable-binary"
+  PORTABILITY=""
   PRECISION='all'
 fi
 
 # Extract the source
 cd $TMP
-tar -zxvf $CWD/$NAME-$VERSION.tar.gz
+tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
 SRC=$TMP/$NAME-$VERSION
 cd $SRC
 fix_source
@@ -59,16 +79,17 @@ if [ "$PRECISION" = "all" ]; then
               --host=$ARCH-slackware-linux \
               --prefix=/usr \
               --sysconfdir=/etc \
+              --libdir=/usr/lib${LIBDIRSUFFIX} \
               --mandir=/usr/man \
               --infodir=/usr/info \
               --enable-shared=yes \
               --enable-static=no \
               --enable-single \
               $PORTABILITY \
-              --enable-threads || exit 2
+              --enable-threads || exit 4
 
-  make -j4 all || exit 2 
-  make DESTDIR=$PKG install || exit 3
+  make -j4 all || exit 5 
+  make DESTDIR=$PKG install || exit 6
 fi
 
 # Configure, build and install double precision library libfftw3
@@ -79,15 +100,16 @@ if [ "$PRECISION" = "all" -o "$PRECISION" = "double" ]; then
               --host=$ARCH-slackware-linux \
               --prefix=/usr \
               --sysconfdir=/etc \
+              --libdir=/usr/lib${LIBDIRSUFFIX} \
               --mandir=/usr/man \
               --infodir=/usr/info \
               --enable-shared=yes \
               --enable-static=no \
               $PORTABILITY \
-              --enable-threads || exit 2
+              --enable-threads || exit 4
 
-  make -j4 all || exit 2 
-  make DESTDIR=$PKG install || exit 3
+  make -j4 all || exit 5 
+  make DESTDIR=$PKG install || exit 6
 fi
 
 # Configure, build and install double precision library libfftw3
@@ -98,16 +120,17 @@ if [ "$PRECISION" = "all" ]; then
               --host=$ARCH-slackware-linux \
               --prefix=/usr \
               --sysconfdir=/etc \
+              --libdir=/usr/lib${LIBDIRSUFFIX} \
               --mandir=/usr/man \
               --infodir=/usr/info \
               --enable-shared=yes \
               --enable-static=no \
 	      --enable-long-double \
               $PORTABILITY \
-              --enable-threads || exit 2
+              --enable-threads || exit 4
 
-  make -j4 all || exit 2 
-  make DESTDIR=$PKG install || exit 3
+  make -j4 all || exit 5 
+  make DESTDIR=$PKG install || exit 6
 fi
 
 # Prepare the package
@@ -120,10 +143,12 @@ rm -f $PKG/usr/info/dir
 gzip_info $PKG
 
 mkdir -p $PKG/install
+install -m 644 $CWD/doinst.sh      $PKG/install/doinst.sh
 install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
 install -m 644 $CWD/slack-required $PKG/install/slack-required
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
 install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
 install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
 install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
